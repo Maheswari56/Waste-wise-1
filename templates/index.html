@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WasteWise — Smart Waste Reporting & SaaS Management System</title>
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js for real data-driven analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="saas-layout">
+        <!-- ================= 2. PROFESSIONAL DARK-GREEN SIDEBAR ================= -->
+        <aside class="saas-sidebar" id="saas-sidebar">
+            <div class="sidebar-header">
+                <a href="#dashboard" class="sidebar-brand">
+                    <div class="brand-icon-box">
+                        <i class="fa-solid fa-recycle"></i>
+                    </div>
+                    <div class="brand-meta">
+                        <span class="brand-name">WasteWise</span>
+                        <span class="brand-sub">Smart Waste Management</span>
+                    </div>
+                </a>
+                <button type="button" class="sidebar-collapse-btn" onclick="toggleMobileSidebar()" aria-label="Close Sidebar">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <nav class="sidebar-nav">
+                <span class="nav-section-label">Main Navigation</span>
+                <a href="#dashboard" class="sidebar-link active" id="nav-dashboard" onclick="setActiveNav('nav-dashboard')">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#report-section" class="sidebar-link" id="nav-report" onclick="setActiveNav('nav-report')">
+                    <i class="fa-solid fa-bullhorn"></i>
+                    <span>File Report</span>
+                </a>
+                <a href="#complaints-section" class="sidebar-link" id="nav-tracker" onclick="setActiveNav('nav-tracker')">
+                    <i class="fa-solid fa-list-check"></i>
+                    <span>Live Tracker</span>
+                    <span class="sidebar-badge" id="sidebar-reports-count">0</span>
+                </a>
+                <a href="#ai-assistant-section" class="sidebar-link" id="nav-ai" onclick="setActiveNav('nav-ai')">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span>AI Assistant</span>
+                </a>
+
+                <span class="nav-section-label" style="margin-top: 1rem;">Administration</span>
+                <a href="javascript:void(0)" class="sidebar-link" id="nav-admin" onclick="openAdminModal()">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span id="sidebar-admin-text">Demo Admin</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="admin-session-card">
+                    <div class="admin-avatar" id="sidebar-avatar-icon">
+                        <i class="fa-solid fa-user-shield"></i>
+                    </div>
+                    <div class="admin-meta">
+                        <div class="admin-title" id="sidebar-user-title">Demonstration Officer</div>
+                        <div class="admin-state" id="sidebar-user-state">Public Citizen View</div>
+                    </div>
+                </div>
+                <button type="button" id="sidebar-admin-btn" class="btn-sidebar-admin" onclick="handleAdminButtonClick()">
+                    <i class="fa-solid fa-shield-halved"></i> <span id="sidebar-btn-label">Demo Admin Login</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- ================= MAIN CONTENT SHELL ================= -->
+        <div class="saas-main">
+            <!-- ================= 3. TOP NAVIGATION BAR ================= -->
+            <header class="saas-topbar">
+                <div class="topbar-left">
+                    <button type="button" class="mobile-menu-toggle" onclick="toggleMobileSidebar()" aria-label="Toggle Navigation">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div class="global-search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="topbar-search-input" placeholder="Search reports by location, description, or ID..." oninput="syncSearchWithTable(this.value)">
+                    </div>
+                </div>
+
+                <div class="topbar-right">
+                    <div class="topbar-badge-pill">
+                        <span class="pulse-dot"></span>
+                        <span id="system-status-indicator">System Active</span>
+                    </div>
+                    <a href="#report-section" class="btn-topbar-action">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>+ Report Waste</span>
+                    </a>
+                </div>
+            </header>
+
+            <!-- Page Content Wrapper -->
+            <main class="content-wrapper">
+                <!-- ================= 4. DASHBOARD HERO SECTION ================= -->
+                <section class="saas-hero-card" id="dashboard">
+                    <div class="hero-backdrop-pattern"></div>
+                    <div class="hero-main-content">
+                        <div class="hero-chip">
+                            <i class="fa-solid fa-leaf"></i> Civic Environmental Intelligence
+                        </div>
+                        <h1 class="hero-heading">Report Waste. Protect Our Planet.</h1>
+                        <p class="hero-subheading">
+                            A smart, AI-powered platform for citizens to report, track, and resolve waste issues in your community.
+                        </p>
+                        <div class="hero-actions">
+                            <a href="#report-section" class="btn-hero-primary">
+                                <i class="fa-solid fa-plus"></i> + Report Waste
+                            </a>
+                            <a href="#ai-assistant-section" class="btn-hero-secondary">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i> AI Assistant
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Lightweight CSS Environmental Illustration -->
+                    <div class="hero-visual">
+                        <div class="eco-city-illustration">
+                            <div class="eco-circle-pulse"></div>
+                            <div class="eco-graphic-center">
+                                <i class="fa-solid fa-tree-city"></i>
+                                <span class="eco-tag">Eco Smart</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ================= 5. STATISTICS CARDS ================= -->
+                <section class="stats-cards-row">
+                    <!-- Total Reports -->
+                    <div class="saas-stat-card card-theme-total">
+                        <div class="stat-content">
+                            <span class="stat-title">Total Reports</span>
+                            <span class="stat-value" id="stat-total">0</span>
+                            <span class="stat-trend"><i class="fa-solid fa-database"></i> Live SQLite persistent count</span>
+                        </div>
+                        <div class="stat-icon-badge">
+                            <i class="fa-solid fa-clipboard-list"></i>
+                        </div>
+                    </div>
+
+                    <!-- Pending -->
+                    <div class="saas-stat-card card-theme-pending">
+                        <div class="stat-content">
+                            <span class="stat-title">Pending</span>
+                            <span class="stat-value" id="stat-pending">0</span>
+                            <span class="stat-trend"><i class="fa-regular fa-clock"></i> Awaiting verification</span>
+                        </div>
+                        <div class="stat-icon-badge">
+                            <i class="fa-solid fa-hourglass-start"></i>
+                        </div>
+                    </div>
+
+                    <!-- In Progress -->
+                    <div class="saas-stat-card card-theme-progress">
+                        <div class="stat-content">
+                            <span class="stat-title">In Progress</span>
+                            <span class="stat-value" id="stat-in-progress">0</span>
+                            <span class="stat-trend"><i class="fa-solid fa-truck-fast"></i> Under active cleanup</span>
+                        </div>
+                        <div class="stat-icon-badge">
+                            <i class="fa-solid fa-truck-pickup"></i>
+                        </div>
+                    </div>
+
+                    <!-- Resolved -->
+                    <div class="saas-stat-card card-theme-resolved">
+                        <div class="stat-content">
+                            <span class="stat-title">Resolved</span>
+                            <span class="stat-value" id="stat-resolved">0</span>
+                            <span class="stat-trend"><i class="fa-regular fa-circle-check"></i> Cleared & verified</span>
+                        </div>
+                        <div class="stat-icon-badge">
+                            <i class="fa-solid fa-circle-check"></i>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ================= 6. CHARTS AND ANALYTICS ================= -->
+                <section class="analytics-section">
+                    <!-- Reports Trend (Area Chart) -->
+                    <div class="saas-card">
+                        <div class="card-header-flex">
+                            <div class="card-title-group">
+                                <h3>Reports Trend</h3>
+                                <p>Waste incidents logged over the last 7 calendar days</p>
+                            </div>
+                            <span class="topbar-badge-pill" style="font-size:0.75rem;">
+                                <i class="fa-solid fa-chart-line"></i> Activity
+                            </span>
+                        </div>
+                        <div class="chart-container-box">
+                            <canvas id="reportsTrendChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Waste by Category (Doughnut Chart) -->
+                    <div class="saas-card">
+                        <div class="card-header-flex">
+                            <div class="card-title-group">
+                                <h3>Waste by Category</h3>
+                                <p>Breakdown based on actual database entries</p>
+                            </div>
+                            <span class="topbar-badge-pill" style="font-size:0.75rem;">
+                                <i class="fa-solid fa-chart-pie"></i> Distribution
+                            </span>
+                        </div>
+                        <div class="doughnut-container-box">
+                            <canvas id="wasteCategoryChart"></canvas>
+                        </div>
+                        <div class="doughnut-legend-list" id="categoryLegendList">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ================= TWO-COLUMN WORKSPACE: FILE REPORT & AI ASSISTANT ================= -->
+                <div class="workspace-two-column">
+                    <!-- ================= 8. FILE REPORT PAGE / SECTION ================= -->
+                    <section id="report-section" class="saas-card">
+                        <div class="card-header-flex">
+                            <div style="display: flex; align-items: center; gap: 0.85rem;">
+                                <div class="form-header-badge">
+                                    <i class="fa-solid fa-file-pen"></i>
+                                </div>
+                                <div class="card-title-group">
+                                    <h3>File a Waste Report</h3>
+                                    <p>Submit photographic and location details for cleanup</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="form-notification" class="notification-box hidden"></div>
+
+                        <form id="waste-report-form" enctype="multipart/form-data">
+                            <div class="saas-form-group">
+                                <label for="reporter_name" class="saas-label">
+                                    <i class="fa-regular fa-user"></i> Reporter Name <span class="opt-tag">(Optional)</span>
+                                </label>
+                                <input type="text" id="reporter_name" name="reporter_name" class="saas-input" placeholder="e.g. John Doe or leave blank to report anonymously">
+                            </div>
+
+                            <div class="saas-form-row">
+                                <div class="saas-form-group">
+                                    <label for="category" class="saas-label">
+                                        <i class="fa-solid fa-shapes"></i> Waste Category <span class="req-star">*</span>
+                                    </label>
+                                    <select id="category" name="category" class="saas-select" required>
+                                        <option value="" disabled selected>Select category...</option>
+                                        <option value="Plastic">Plastic (Bottles, Packaging, Polythene)</option>
+                                        <option value="Food Waste">Food Waste (Kitchen scraps, Wet organic)</option>
+                                        <option value="Electronic Waste">Electronic Waste (Cables, Gadgets, Batteries)</option>
+                                        <option value="Medical Waste">Medical Waste (Sharps, Masks, Medicine)</option>
+                                        <option value="General Waste">General Waste (Mixed trash, Construction rubble)</option>
+                                    </select>
+                                </div>
+
+                                <div class="saas-form-group">
+                                    <label for="severity" class="saas-label">
+                                        <i class="fa-solid fa-triangle-exclamation"></i> Waste Severity <span class="req-star">*</span>
+                                    </label>
+                                    <select id="severity" name="severity" class="saas-select" required>
+                                        <option value="Low">Low (Small debris, solitary litter)</option>
+                                        <option value="Medium" selected>Medium (Overflowing bin, local street spill)</option>
+                                        <option value="High">High (Major dump, blocking drainage/hazard)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="saas-form-group">
+                                <label for="location" class="saas-label">
+                                    <i class="fa-solid fa-location-dot"></i> Location & Landmark <span class="req-star">*</span>
+                                </label>
+                                <div class="input-action-cluster">
+                                    <input type="text" id="location" name="location" class="saas-input" required placeholder="e.g. 5th Cross Road, Near Green Park Metro Station">
+                                    <button type="button" class="btn-geo-detect" id="btn-detect-geo" onclick="detectLocation()" title="Auto-detect location and resolve address">
+                                        <i class="fa-solid fa-crosshairs"></i> <span id="btn-detect-text">Detect</span>
+                                    </button>
+                                </div>
+                                <div id="location-hint" class="location-hint hidden"></div>
+                            </div>
+
+                            <div class="saas-form-group">
+                                <label for="description" class="saas-label">
+                                    <i class="fa-solid fa-align-left"></i> Description <span class="req-star">*</span>
+                                </label>
+                                <textarea id="description" name="description" class="saas-textarea" rows="3" required placeholder="Describe the pile, smell, size, or hazard... (minimum 5 characters)"></textarea>
+                                <div class="form-sparkle-bar">
+                                    <span>Need guidance on category?</span>
+                                    <button type="button" class="btn-link-sparkle" onclick="askAiFromForm()">
+                                        <i class="fa-solid fa-wand-magic-sparkles"></i> Let AI Analyze This Description
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="saas-form-group">
+                                <label for="photo" class="saas-label">
+                                    <i class="fa-solid fa-image"></i> Photograph Evidence <span class="opt-tag">(Optional, max 8MB)</span>
+                                </label>
+                                <div class="file-upload-surface" id="drop-area">
+                                    <input type="file" id="photo" name="photo" accept="image/png, image/jpeg, image/jpg, image/webp, image/gif" onchange="previewFile(this)">
+                                    <div class="drop-prompt" id="drop-content">
+                                        <i class="fa-solid fa-cloud-arrow-up drop-prompt-icon"></i>
+                                        <span class="drop-prompt-text">Drag & drop photograph or <b>Browse file</b></span>
+                                        <span class="drop-prompt-hint">Supports PNG, JPG, JPEG, WEBP up to 8MB</span>
+                                    </div>
+                                    <div class="image-preview-cluster hidden" id="preview-box">
+                                        <img id="image-preview" src="#" alt="Upload Preview">
+                                        <button type="button" class="btn-clear-preview" onclick="clearImageUpload()">&times;</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn-saas-submit" id="submit-btn">
+                                <i class="fa-solid fa-paper-plane"></i> Submit Waste Report
+                            </button>
+                        </form>
+                    </section>
+
+                    <!-- ================= 10. AI WASTE ASSISTANT: MODERN CHAT UI ================= -->
+                    <section id="ai-assistant-section" class="saas-card ai-assistant-card">
+                        <div class="card-header-flex">
+                            <div style="display: flex; align-items: center; gap: 0.85rem;">
+                                <div class="form-header-badge" style="background:#D1FAE5; color:#064E3B;">
+                                    <i class="fa-solid fa-robot"></i>
+                                </div>
+                                <div class="card-title-group">
+                                    <h3>AI Waste Assistant</h3>
+                                    <p>Intelligent Categorization & Safe Disposal Advice</p>
+                                </div>
+                            </div>
+                            <span class="topbar-badge-pill" style="font-size: 0.72rem;">
+                                <i class="fa-solid fa-bolt"></i> Gemini & Fallback
+                            </span>
+                        </div>
+
+                        <!-- Chat thread bubble container -->
+                        <div class="chat-thread-container" id="chat-thread-box">
+                            <div class="chat-empty-hero" id="chat-empty-state">
+                                <div class="chat-empty-avatar">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                </div>
+                                <h4>Ask About Any Waste Item</h4>
+                                <p>Describe any waste pile or item to receive its classification, safety handling procedures, and environmental hazard analysis.</p>
+                            </div>
+                        </div>
+
+                        <!-- Chat input bar -->
+                        <div class="chat-input-bar">
+                            <textarea id="ai-query-input" rows="1" placeholder="Type or paste waste description... (e.g. Swollen laptop battery with leaking copper wires)" onkeydown="if(event.key==='Enter' && !event.shiftKey){ event.preventDefault(); runAiAnalysis(); }"></textarea>
+                            <button type="button" class="btn-chat-send" id="ai-analyze-btn" onclick="runAiAnalysis()" title="Send to AI Assistant">
+                                <i class="fa-solid fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- ================= 7 & 9. RECENT WASTE REPORTS TABLE / LIVE TRACKER ================= -->
+                <section id="complaints-section" class="saas-card">
+                    <div class="card-header-flex">
+                        <div class="card-title-group">
+                            <h3>Recent Waste Reports & Live Tracker</h3>
+                            <p>Track citizen complaints, review location addresses, and monitor cleanup stages.</p>
+                        </div>
+                        <div class="topbar-badge-pill" id="admin-indicator-badge">
+                            <span class="pulse-dot"></span>
+                            <span id="admin-mode-text">Public Citizen View</span>
+                        </div>
+                    </div>
+
+                    <!-- Filter & Search Bar -->
+                    <div class="table-filter-bar">
+                        <div class="filter-input-wrap">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="filter-search" placeholder="Search by location, description, or ID..." oninput="debounceSearch()">
+                        </div>
+
+                        <div class="filter-select-cluster">
+                            <select id="filter-category" onchange="loadReports()">
+                                <option value="All">All Categories</option>
+                                <option value="Plastic">Plastic</option>
+                                <option value="Food Waste">Food Waste</option>
+                                <option value="Electronic Waste">Electronic Waste</option>
+                                <option value="Medical Waste">Medical Waste</option>
+                                <option value="General Waste">General Waste</option>
+                            </select>
+
+                            <select id="filter-status" onchange="loadReports()">
+                                <option value="All">All Statuses</option>
+                                <option value="Pending">Pending</option>
+                                <option value="In Progress">In Progress</option>
+                                <option value="Resolved">Resolved</option>
+                            </select>
+
+                            <button type="button" class="btn-filter-refresh" onclick="loadReports()" title="Refresh reports list">
+                                <i class="fa-solid fa-rotate"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Responsive Reports Table -->
+                    <div class="saas-table-container">
+                        <table class="saas-reports-table">
+                            <thead>
+                                <tr>
+                                    <th>Report ID</th>
+                                    <th>Category</th>
+                                    <th>Location</th>
+                                    <th>Severity</th>
+                                    <th>Status</th>
+                                    <th>Reported Date</th>
+                                    <th>Evidence</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reports-table-body">
+                                <!-- Populated dynamically via script.js -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="empty-state" class="table-empty-notice hidden">
+                        <i class="fa-regular fa-folder-open"></i>
+                        <h4>No reports found</h4>
+                        <p>No waste complaints match your current search and filter criteria.</p>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- ================= MODALS ================= -->
+    <!-- Details Modal -->
+    <div id="details-modal" class="saas-modal hidden">
+        <div class="modal-scrim" onclick="closeDetailsModal()"></div>
+        <div class="modal-panel">
+            <div class="modal-header-bar">
+                <h3 id="modal-report-id">Report Details</h3>
+                <button type="button" class="modal-close-icon" onclick="closeDetailsModal()">&times;</button>
+            </div>
+            <div id="modal-report-body">
+                <!-- Dynamically injected -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 11. Demo Admin Modal -->
+    <div id="admin-modal" class="saas-modal hidden">
+        <div class="modal-scrim" onclick="closeAdminModal()"></div>
+        <div class="modal-panel admin-modal-panel">
+            <div class="modal-header-bar">
+                <h3><i class="fa-solid fa-shield-halved" style="color:#064E3B; margin-right: 0.4rem;"></i> Demo Admin Login</h3>
+                <button type="button" class="modal-close-icon" onclick="closeAdminModal()">&times;</button>
+            </div>
+            <div>
+                <p style="font-size:0.86rem; color:var(--text-secondary); margin-bottom:1.2rem;">
+                    Hackathon judges and demo evaluators can authenticate with the demonstration passcode to enable status updates (Pending &rarr; In Progress &rarr; Resolved).
+                </p>
+                <div class="saas-form-group">
+                    <label for="admin-passcode-input" class="saas-label">Admin Passcode:</label>
+                    <input type="password" id="admin-passcode-input" class="saas-input" placeholder="Default: admin123" onkeydown="if(event.key==='Enter') submitAdminLogin()">
+                </div>
+                <div id="admin-error-msg" class="notification-box error hidden"></div>
+                <div style="display:flex; justify-content:flex-end; gap:0.75rem; margin-top:1.5rem;">
+                    <button type="button" class="btn-geo-detect" style="background:#F1F5F9; border-color:#CBD5E1; color:var(--text-secondary);" onclick="closeAdminModal()">Cancel</button>
+                    <button type="button" class="btn-hero-primary" style="padding:0.6rem 1.25rem; font-size:0.9rem;" onclick="submitAdminLogin()">Verify Passcode</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
